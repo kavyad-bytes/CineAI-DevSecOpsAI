@@ -40,7 +40,7 @@ spec:
       containers:
         - name: backend
           image: ghcr.io/kavyad-bytes/cineai-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8081
           envFrom:
@@ -61,12 +61,15 @@ kind: Service
 metadata:
   name: backend-service
   namespace: cineai
+  labels:
+    app: backend
 spec:
   type: ClusterIP
   selector:
     app: backend
   ports:
-    - port: 8081
+    - name: http
+      port: 8081
       targetPort: 8081
 ---
 apiVersion: autoscaling/v2

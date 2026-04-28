@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: cineai-frontend:latest
+          image: ghcr.io/kavyad-bytes/cineai-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
@@ -26,10 +26,9 @@ metadata:
   name: frontend-service
   namespace: cineai
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: frontend
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 30080

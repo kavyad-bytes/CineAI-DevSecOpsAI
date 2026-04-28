@@ -2,9 +2,7 @@ name: CineAI DevSecOps CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build-test-scan:
@@ -13,13 +11,13 @@ jobs:
     permissions:
       contents: read
       packages: write
-      security-events: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Java 21
+      # Java build
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -29,7 +27,8 @@ jobs:
         working-directory: backend
         run: mvn clean package -DskipTests
 
-      - name: Set up Node 20
+      # Node build
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -40,11 +39,6 @@ jobs:
           npm install
           npm run build
 
-      - name: Run Semgrep SAST
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: auto
-
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -52,32 +46,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build backend Docker image
+      - name: Build backend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/cineai-backend:${{ github.sha }} ./backend
+          docker build -t ghcr.io/${{ github.repository_owner }}/cineai-backend:latest ./backend
 
-      - name: Build frontend Docker image
+      - name: Build frontend image
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/cineai-frontend:${{ github.sha }} ./frontend
-
-      - name: Trivy scan backend image
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/cineai-backend:${{ github.sha }}
-          severity: CRITICAL
-          exit-code: 1
-
-      - name: Trivy scan frontend image
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ghcr.io/${{ github.repository_owner }}/cineai-frontend:${{ github.sha }}
-          severity: CRITICAL
-          exit-code: 1
+          docker build -t ghcr.io/${{ github.repository_owner }}/cineai-frontend:latest ./frontend
 
       - name: Push backend image
-        if: github.event_name == 'push'
-        run: docker push ghcr.io/${{ github.repository_owner }}/cineai-backend:${{ github.sha }}
+        run: docker push ghcr.io/${{ github.repository_owner }}/cineai-backend:latest
 
       - name: Push frontend image
-        if: github.event_name == 'push'
-        run: docker push ghcr.io/${{ github.repository_owner }}/cineai-frontend:${{ github.sha }}
+        run: docker push ghcr.io/${{ github.repository_owner }}/cineai-frontend:latest

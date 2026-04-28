@@ -40,7 +40,7 @@ jobs:
           npm install
           npm run build
 
-      - name: SonarCloud Scan
+            - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

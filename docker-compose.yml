@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: cineai-postgres
+    environment:
+      POSTGRES_DB: cineai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    container_name: cineai-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  ollama:
+    image: ollama/ollama
+    container_name: cineai-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  backend:
+    build: ./backend
+    container_name: cineai-backend
+    depends_on:
+      - postgres
+      - minio
+      - ollama
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cineai
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      MINIO_URL: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: movies
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3.2
+      
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8081/api/movies
+    container_name: cineai-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"    
+
+volumes:
+  postgres_data:
+  minio_data:
+  ollama_data:

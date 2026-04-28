@@ -13,22 +13,29 @@ spec:
       labels:
         app: frontend
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: frontend
           image: ghcr.io/kavyad-bytes/cineai-frontend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: frontend-service
   namespace: cineai
+  labels:
+    app: frontend
 spec:
   type: ClusterIP
   selector:
     app: frontend
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 80

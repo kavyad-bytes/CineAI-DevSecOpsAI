@@ -37,6 +37,8 @@ spec:
       labels:
         app: backend
     spec:
+      securityContext:
+        runAsNonRoot: true
       containers:
         - name: backend
           image: ghcr.io/kavyad-bytes/cineai-backend:latest
@@ -48,6 +50,8 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secret
+          securityContext:
+            allowPrivilegeEscalation: false
           resources:
             requests:
               cpu: "250m"

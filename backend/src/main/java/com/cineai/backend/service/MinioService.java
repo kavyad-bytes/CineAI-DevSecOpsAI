@@ -34,7 +34,27 @@ public class MinioService {
                 .build();
     }
 
+    private void ensureBucketExists() throws Exception {
+        MinioClient client = getClient();
+
+        boolean exists = client.bucketExists(
+                BucketExistsArgs.builder()
+                        .bucket(bucket)
+                        .build()
+        );
+
+        if (!exists) {
+            client.makeBucket(
+                    MakeBucketArgs.builder()
+                            .bucket(bucket)
+                            .build()
+            );
+        }
+    }
+
     public String uploadFile(MultipartFile file) throws Exception {
+        ensureBucketExists();
+
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
         getClient().putObject(

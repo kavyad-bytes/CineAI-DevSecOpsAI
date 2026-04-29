@@ -29,9 +29,7 @@ export const aiSearchMovies = async (query) => {
   const response = await axios.post(
     `${API_BASE_URL}/ai-search`,
     { query },
-    {
-      headers: getAuthHeaders(),
-    }
+    { headers: getAuthHeaders() }
   );
   return response.data;
 };
@@ -39,8 +37,7 @@ export const aiSearchMovies = async (query) => {
 export const uploadMovie = async (formData) => {
   const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
     headers: {
-      ...getAuthHeaders(),
-      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${localStorage.getItem("cineai_token")}`,
     },
   });
 

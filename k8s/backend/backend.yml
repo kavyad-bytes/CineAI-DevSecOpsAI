@@ -38,12 +38,18 @@ spec:
       labels:
         app: backend
     spec:
+      # 🔐 Pod-level security
+      securityContext:
+        runAsNonRoot: true
+
       containers:
         - name: backend
           image: ghcr.io/kavyad-bytes/cineai-backend:latest
           imagePullPolicy: Always
+
           ports:
             - containerPort: 8081
+
           envFrom:
             - configMapRef:
                 name: backend-config
@@ -51,8 +57,11 @@ spec:
                 name: backend-secret
             - secretRef:
                 name: backend-jwt-secret
+
+          # 🔐 Container-level security
           securityContext:
             allowPrivilegeEscalation: false
+
           resources:
             requests:
               cpu: "250m"
@@ -60,6 +69,7 @@ spec:
             limits:
               cpu: "500m"
               memory: "1Gi"
+
 ---
 apiVersion: v1
 kind: Service
@@ -76,6 +86,7 @@ spec:
     - name: http
       port: 8081
       targetPort: 8081
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

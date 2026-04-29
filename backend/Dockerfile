@@ -1,17 +1,17 @@
-FROM maven:3.9.9-eclipse-temurin-21 AS build
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
 
-COPY pom.xml .
-COPY src ./src
+# create non-root user
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-RUN mvn clean package -DskipTests
+COPY target/*.jar app.jar
 
-FROM eclipse-temurin:21-jre
+# change ownership
+RUN chown -R appuser:appgroup /app
 
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
+# switch to non-root
+USER appuser
 
 EXPOSE 8081
 

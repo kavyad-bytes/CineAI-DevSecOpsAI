@@ -9,6 +9,7 @@ data:
   MINIO_BUCKET: movies
   OLLAMA_URL: http://ollama-service:11434
   OLLAMA_MODEL: llama3.2
+  JWT_EXPIRATION: "86400000"
 ---
 apiVersion: v1
 kind: Secret
@@ -21,6 +22,7 @@ stringData:
   SPRING_DATASOURCE_PASSWORD: postgres
   MINIO_ACCESS_KEY: minioadmin
   MINIO_SECRET_KEY: minioadmin
+  JWT_SECRET: VGhpc0lzQVNlY3JldEtleUZvckNpbmVBSUpXVFRva2VuMTIzNDU2Nzg5
 ---
 apiVersion: apps/v1
 kind: Deployment

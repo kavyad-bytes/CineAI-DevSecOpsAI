@@ -22,7 +22,7 @@ stringData:
   SPRING_DATASOURCE_PASSWORD: postgres
   MINIO_ACCESS_KEY: minioadmin
   MINIO_SECRET_KEY: minioadmin
-  JWT_SECRET: VGhpc0lzQVNlY3JldEtleUZvckNpbmVBSUpXVFRva2VuMTIzNDU2Nzg5
+  JWT_SECRET: ${JWT_SECRET}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,6 +52,8 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secret
+            - secretRef:
+                name: backend-jwt-secret
           securityContext:
             allowPrivilegeEscalation: false
           resources:

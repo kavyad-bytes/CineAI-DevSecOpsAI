@@ -22,7 +22,6 @@ stringData:
   SPRING_DATASOURCE_PASSWORD: postgres
   MINIO_ACCESS_KEY: minioadmin
   MINIO_SECRET_KEY: minioadmin
-  JWT_SECRET: ${JWT_SECRET}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,8 +38,6 @@ spec:
       labels:
         app: backend
     spec:
-      securityContext:
-        runAsNonRoot: true
       containers:
         - name: backend
           image: ghcr.io/kavyad-bytes/cineai-backend:latest

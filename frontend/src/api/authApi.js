@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const AUTH_BASE_URL =
-  import.meta.env.VITE_AUTH_BASE_URL || "http://localhost:8081/api/auth";
+  import.meta.env.VITE_AUTH_BASE_URL || "http://cineai.local/api/auth";
 
 export const registerUser = async (email, password) => {
   const response = await axios.post(`${AUTH_BASE_URL}/register`, {

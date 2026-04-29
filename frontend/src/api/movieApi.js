@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8081/api/movies";
+  import.meta.env.VITE_API_BASE_URL || "http://cineai.local/api/movies";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("cineai_token");
